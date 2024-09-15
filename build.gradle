@@ -1,8 +1,8 @@
 plugins {
     id 'fabric-loom' version "1.7.4" // To use chocoloom, change the version to a commit hash
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'com.github.johnrengelman.shadow' version '8.1.0'
     id 'maven-publish'
-    id "org.jetbrains.kotlin.jvm" version "1.6.10"
+    id "org.jetbrains.kotlin.jvm" version "2.0.20"
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -78,8 +78,10 @@ repositories {
 }
 
 loom {
+    clientOnlyMinecraftJar()
     noIntermediateMappings()
-    customMinecraftMetadata.set("https://github.com/Turnip-Labs/bta-manifest-repo/releases/download/v${project.bta_version}/${project.bta_version}.json")
+    customMinecraftMetadata.set("https://nightly.betterthanadventure.net/bta-${project.bta_version}-manifest.json")
+    //customMinecraftMetadata.set("https://github.com/Turnip-Labs/bta-manifest-repo/releases/download/v${project.bta_version}/${project.bta_version}.json")
     runs {
         client {
             programArgs "--username Dev"
@@ -102,7 +104,8 @@ switch (OperatingSystem.current()) {
 }
 
 dependencies {
-    minecraft "bta-download-repo:bta:${project.bta_version}"
+    minecraft ("::${project.bta_version}")
+    //minecraft "bta-download-repo:bta:${project.bta_version}"
     mappings loom.layered() {}
 
     modRuntimeOnly "objects:client:43db9b498cb67058d2e12d394e6507722e71bb45" // https://piston-data.mojang.com/v1/objects/43db9b498cb67058d2e12d394e6507722e71bb45/client.jar

@@ -290,7 +290,7 @@ public class Mouse {
      */
     public static void create() throws LWJGLException {
 //        synchronized (OpenGLPackageAccess.global_lock) {
-            if (!Display.isCreated()) throw new IllegalStateException("Display must be created.");
+            //TODO: fix: if (!Display.isCreated()) throw new IllegalStateException("Display must be created.");
 
             create(LWJGLImplementationUtils.getOrCreateInputImplementation());
 //        }

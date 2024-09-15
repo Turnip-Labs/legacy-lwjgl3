@@ -1,5 +1,6 @@
 package org.lwjgl.opengl
 
+import net.minecraft.client.render.window.GameWindowGLFW
 import org.lwjgl.BufferUtils
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFWErrorCallback
@@ -18,22 +19,23 @@ object Display {
     var title: String = ""
         set(value) {
             field = value
-            if (isCreated) {
-                GLFW.glfwSetWindowTitle(handle, value)
+            if (isCreatedKt) {
+                GLFW.glfwSetWindowTitle(handleKt, value)
             }
         }
-    @JvmStatic
-    var handle: Long = -1
-    private var resizable = false
 
     @JvmStatic
     var displayMode: DisplayMode = DisplayMode(640, 480, 24, 60)
 
     @JvmStatic
-    var width = 0
+    var handleKt: Long = -1
+    private var resizable = false
 
     @JvmStatic
-    var height = 0
+    var widthKt = 0
+
+    @JvmStatic
+    var heightKt = 0
 
     @JvmStatic
     var xPos = 0
@@ -42,6 +44,13 @@ object Display {
     var yPos = 0
 
     @JvmStatic
+    var window: GameWindowGLFW? = null
+	    get() = field
+	    set(value) {
+		    field = value
+	    }
+
+	@JvmStatic
     val desktopDisplayMode: DisplayMode?
      get() { return availableDisplayModes.maxByOrNull { it.width * it.height } }
     private var window_resized = false
@@ -57,8 +66,8 @@ object Display {
             cached_icons = icons.map { cloneByteBuffer(it) }.toTypedArray()
         }
 
-        if (this.isCreated) {
-            GLFW.glfwSetWindowIcon(this.handle, iconsToGLFWBuffer(this.cached_icons!!))
+        if (this.isCreatedKt) {
+            GLFW.glfwSetWindowIcon(this.handleKt, iconsToGLFWBuffer(this.cached_icons!!))
             return 1
         } else {
             return 0
@@ -103,7 +112,7 @@ object Display {
         if ( Keyboard.isCreated() ) {
             Keyboard.poll()
         }
-        GLFW.glfwSwapBuffers(handle)
+        GLFW.glfwSwapBuffers(handleKt)
     }
 
     @JvmStatic
@@ -115,18 +124,18 @@ object Display {
         GLFW.glfwDefaultWindowHints() // optional, the current window hints are already the default
         GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GLFW.GLFW_FALSE) // the window will stay hidden after creation
         GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, if (resizable) GLFW.GLFW_TRUE else GLFW.GLFW_FALSE)
-        handle =
+        handleKt =
             GLFW.glfwCreateWindow(displayMode.width, displayMode.height, title, MemoryUtil.NULL, MemoryUtil.NULL)
-        width = displayMode.width
-        height = displayMode.height
-        GLFW.glfwMakeContextCurrent(handle)
+        widthKt = displayMode.width
+        heightKt = displayMode.height
+        GLFW.glfwMakeContextCurrent(handleKt)
         GL.createCapabilities()
         // create general callbacks
         sizeCallback = GLFWWindowSizeCallback.create(Display::resizeCallback)
-        GLFW.glfwSetWindowSizeCallback(handle, sizeCallback)
+        GLFW.glfwSetWindowSizeCallback(handleKt, sizeCallback)
         Mouse.create()
         Keyboard.create()
-        GLFW.glfwShowWindow(handle)
+        GLFW.glfwShowWindow(handleKt)
         if (this.cached_icons != null) {
             this.setIcon(this.cached_icons!!)
         }
@@ -139,35 +148,35 @@ object Display {
     fun setFullscreen(fullscreen: Boolean) {
         println("setFullscreen: $fullscreen")
         runCatching {
-            this.resizeCallback(handle, displayMode.width, displayMode.height)
+            this.resizeCallback(handleKt, displayMode.width, displayMode.height)
             if (fullscreen) {
                 var monitor = GLFW.glfwGetPrimaryMonitor()
 
                 GLFW.glfwSetWindowMonitor(
-                    handle,
+                    handleKt,
                     monitor,
                     0,
                     0,
-                    width,
-                    height,
+                    widthKt,
+                    heightKt,
                     displayMode.frequency
                 )
                 xPos = displayMode.width / 2
                 yPos = displayMode.height / 2
             } else {
-                xPos -= width / 2
-                yPos -= height / 2
+                xPos -= widthKt / 2
+                yPos -= heightKt / 2
                 GLFW.glfwSetWindowMonitor(
-                    handle,
+                    handleKt,
                     0L,
                     xPos,// need a xPos
                     yPos,// need a yPos
-                    width,
-                    height,
+                    widthKt,
+                    heightKt,
                     -1
                 )
             }
-            GLFW.glfwSetWindowSize(handle, width, height)
+            GLFW.glfwSetWindowSize(handleKt, widthKt, heightKt)
         }.onFailure {
             it.printStackTrace()
         }
@@ -191,10 +200,10 @@ object Display {
         }
 
     private fun resizeCallback(window: Long, width: Int, height: Int) {
-        if (window == handle) {
+        if (window == handleKt) {
             window_resized = true
-            Display.width = width
-            Display.height = height
+            Display.widthKt = width
+            Display.heightKt = height
         }
     }
 
@@ -204,7 +213,27 @@ object Display {
         Mouse.destroy()
         Keyboard.destroy()
         // Destroy the window
-        GLFW.glfwDestroyWindow(handle)
+        GLFW.glfwDestroyWindow(handleKt)
+    }
+
+    @JvmStatic
+    fun getHandle(): Long {
+        return window!!.window
+    }
+
+    @JvmStatic
+    fun getWidth(): Int {
+        return window!!.getWidthScreenCoords()
+    }
+
+    @JvmStatic
+    fun getHeight(): Int {
+        return window!!.getHeightScreenCoords()
+    }
+
+    @JvmStatic
+    fun isCreated(): Boolean {
+        return window!!.window != -1L
     }
 
     @JvmStatic
@@ -216,12 +245,12 @@ object Display {
     }
 
     @JvmStatic
-    val isCreated: Boolean
-        get() = handle != -1L
+    val isCreatedKt: Boolean
+        get() = handleKt != -1L
 
     @JvmStatic
     val isCloseRequested: Boolean
-        get() = GLFW.glfwWindowShouldClose(handle)
+        get() = GLFW.glfwWindowShouldClose(handleKt)
 
     @JvmStatic
     val isActive: Boolean
@@ -230,7 +259,7 @@ object Display {
     @JvmStatic
     fun setResizable(isResizable: Boolean) {
         resizable = isResizable
-        if (isCreated) {
+        if (isCreatedKt) {
             GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, if (resizable) GLFW.GLFW_TRUE else GLFW.GLFW_FALSE)
         }
     }
