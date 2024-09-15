@@ -36,8 +36,8 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.glfw.GLFW;
 import com.github.zarzelcow.legacylwjgl3.implementation.LWJGLImplementationUtils;
-import org.lwjgl.opengl.Display;
 import com.github.zarzelcow.legacylwjgl3.implementation.input.InputImplementation;
+import org.lwjgl.opengl.Display;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;
