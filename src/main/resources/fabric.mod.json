@@ -12,16 +12,12 @@
   "contact": {
     "sources": "https://github.com/Zarzelcow/legacy-lwjgl3"
   },
-  "license": "BSD-Zero",
+  "license": "LGPL-2.1",
   "icon": "assets/legacy-lwjgl3/icon.png",
   "environment": "client",
   "entrypoints": {
-    "main": [
-      "com.github.zarzelcow.legacylwjgl3.LegacyLWJGL3"
-    ]
   },
   "mixins": [
-    "legacy-lwjgl3.mixins.json"
   ],
   "depends": {
   }
