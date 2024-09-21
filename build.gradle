@@ -204,16 +204,21 @@ tasks.register('remapShadowJar', RemapJarTask) {
 }
 
 // configure the maven publication
-/*publishing {
+publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
         }
     }
 
-    // select the repositories you want to publish to
     repositories {
-        // uncomment to publish to the local maven
-        mavenLocal()
+        maven {
+            name = "signalumMaven"
+            url = "https://maven.thesignalumproject.net/infrastructure"
+            credentials(PasswordCredentials)
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
     }
-}*/
+}
