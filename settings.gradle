@@ -9,5 +9,9 @@ pluginManagement {
 			name = 'Jitpack'
 			url = 'https://jitpack.io'
 		}
+		maven {
+			name = 'signalumMaven'
+			url = 'https://maven.thesignalumproject.net/infrastructure'
+		}
 	}
 }
