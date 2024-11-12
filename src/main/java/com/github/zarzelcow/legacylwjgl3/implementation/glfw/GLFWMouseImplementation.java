@@ -1,5 +1,6 @@
 package com.github.zarzelcow.legacylwjgl3.implementation.glfw;
 
+import org.lwjgl.LWJGLException;
 import org.lwjgl.glfw.*;
 import com.github.zarzelcow.legacylwjgl3.implementation.input.MouseImplementation;
 import org.lwjgl.input.Mouse;
@@ -151,5 +152,36 @@ public class GLFWMouseImplementation implements MouseImplementation {
     @Override
     public boolean isInsideWindow() {
         return this.isInsideWindow;
+    }
+
+    @Override
+    public Object createCursor(int width, int height, int xHotspot, int yHotspot, int numImages, IntBuffer images, IntBuffer delays) throws LWJGLException {
+        return null;
+    }
+
+    @Override
+    public void destroyCursor(Object cursor_handle) {
+
+    }
+
+
+    @Override
+    public int getNativeCursorCapabilities() {
+        return 0;
+    }
+
+    @Override
+    public void setNativeCursor(Object handle) throws LWJGLException {
+
+    }
+
+    @Override
+    public int getMinCursorSize() {
+        return 0;
+    }
+
+    @Override
+    public int getMaxCursorSize() {
+        return 0;
     }
 }

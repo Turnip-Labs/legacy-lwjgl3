@@ -1,5 +1,7 @@
 package com.github.zarzelcow.legacylwjgl3.implementation.input;
 
+import org.lwjgl.LWJGLException;
+
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
@@ -82,5 +84,35 @@ public class CombinedInputImplementation implements InputImplementation {
     @Override
     public boolean isInsideWindow() {
         return mouseImpl.isInsideWindow();
+    }
+
+    @Override
+    public Object createCursor(int width, int height, int xHotspot, int yHotspot, int numImages, IntBuffer images, IntBuffer delays) throws LWJGLException {
+        return mouseImpl.createCursor(width, height, xHotspot, yHotspot, numImages, images, delays);
+    }
+
+    @Override
+    public void destroyCursor(Object cursor_handle) {
+        mouseImpl.destroyCursor(cursor_handle);
+    }
+
+    @Override
+    public int getNativeCursorCapabilities() {
+        return mouseImpl.getNativeCursorCapabilities();
+    }
+
+    @Override
+    public void setNativeCursor(Object handle) throws LWJGLException {
+        mouseImpl.setNativeCursor(handle);
+    }
+
+    @Override
+    public int getMinCursorSize() {
+        return mouseImpl.getMinCursorSize();
+    }
+
+    @Override
+    public int getMaxCursorSize() {
+        return mouseImpl.getMaxCursorSize();
     }
 }

@@ -226,7 +226,7 @@ public final class Display {
         GLFW.glfwPollEvents();
         if (Mouse.isCreated()) {
             Mouse.poll();
-//            Mouse.updateCursor();
+            Mouse.updateCursor();
         }
 
         if (Keyboard.isCreated()) {

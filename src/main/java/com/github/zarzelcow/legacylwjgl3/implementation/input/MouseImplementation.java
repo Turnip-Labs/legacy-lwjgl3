@@ -1,5 +1,7 @@
 package com.github.zarzelcow.legacylwjgl3.implementation.input;
 
+import org.lwjgl.LWJGLException;
+
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
@@ -25,4 +27,23 @@ public interface MouseImplementation {
     int getButtonCount();
 
     boolean isInsideWindow();
+
+    /** Native cursor handles */
+    Object createCursor(int width, int height, int xHotspot, int yHotspot, int numImages, IntBuffer images, IntBuffer delays) throws LWJGLException;
+
+    void destroyCursor(Object cursor_handle);
+
+    /**
+     * Function to determine native cursor support
+     */
+    int getNativeCursorCapabilities();
+
+    /** Method to set the native cursor */
+    void setNativeCursor(Object handle) throws LWJGLException;
+
+    /** Method returning the minimum cursor size */
+    int getMinCursorSize();
+
+    /** Method returning the maximum cursor size */
+    int getMaxCursorSize();
 }
