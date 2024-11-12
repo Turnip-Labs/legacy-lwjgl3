@@ -126,8 +126,8 @@ public class GLFWMouseImplementation implements MouseImplementation {
 
     @Override
     public void setCursorPosition(int x, int y) {
-//        this.last_x = x;
-//        this.last_y = y;
+        this.last_x = x;
+        this.last_y = y;
         GLFW.glfwSetCursorPos(this.windowHandle, x, y);
     }
 
