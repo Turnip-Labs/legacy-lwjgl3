@@ -1,6 +1,5 @@
 package com.github.zarzelcow.legacylwjgl3;
 
-import kotlin.jvm.internal.Intrinsics;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.openal.ALC;
 import org.lwjgl.openal.ALC10;
@@ -8,6 +7,7 @@ import org.lwjgl.openal.ALCCapabilities;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.IntBuffer;
+import java.util.Objects;
 
 import static org.lwjgl.openal.AL.createCapabilities;
 
@@ -49,7 +49,7 @@ public class ALExtensions {
                     MemoryStack stack = MemoryStack.stackPush();
                     long var8 = _devicePtr;
                     int var10003 = contextSynchronized ? 1 : 0;
-                    Intrinsics.checkNotNullExpressionValue(stack, "stack");
+                    Objects.requireNonNull(stack,"stack");
                     _contextPtr = ALC10.alcCreateContext(var8, createAttributeList(contextFrequency, contextRefresh, var10003, stack));
                     stack.close();
                 }

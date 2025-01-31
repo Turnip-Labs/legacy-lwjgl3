@@ -2,7 +2,6 @@ plugins {
     id 'fabric-loom' version "1.7.bta" // To use chocoloom, change the version to a commit hash
     id 'com.github.johnrengelman.shadow' version '8.1.0'
     id 'maven-publish'
-    id "org.jetbrains.kotlin.jvm" version "2.0.20"
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -32,14 +31,6 @@ repositories {
     maven { url "https://jitpack.io" }
     mavenCentral()
     ivy {
-        url = "https://nightly.betterthanadventure.net"
-        patternLayout {
-            artifact "/bta-[revision]-client.jar"
-            m2compatible = true
-        }
-        metadataSources { artifact() }
-    }
-    ivy {
         url = "https://github.com/Better-than-Adventure"
         patternLayout {
             artifact "[organisation]/releases/download/v[revision]/[module].jar"
@@ -51,6 +42,22 @@ repositories {
         url = "https://github.com/Better-than-Adventure"
         patternLayout {
             artifact "[organisation]/releases/download/v[revision]/[module].jar"
+            m2compatible = true
+        }
+        metadataSources { artifact() }
+    }
+    ivy {
+        url = "https://downloads.betterthanadventure.net/bta-client/prerelease/"
+        patternLayout {
+            artifact "/v[revision]/client.jar"
+            m2compatible = true
+        }
+        metadataSources { artifact() }
+    }
+    ivy {
+        url = "https://downloads.betterthanadventure.net/bta-server/prerelease/"
+        patternLayout {
+            artifact "/v[revision]/server.jar"
             m2compatible = true
         }
         metadataSources { artifact() }
@@ -59,7 +66,7 @@ repositories {
 
 loom {
     noIntermediateMappings()
-    customMinecraftMetadata.set("https://nightly.betterthanadventure.net/bta-${project.bta_version}-manifest.json")
+    customMinecraftMetadata.set("https://github.com/Turnip-Labs/bta-manifest-repo/releases/download/v${project.bta_version}/${project.bta_version}.json")
     runs {
         client {
             programArgs "--username Dev"
@@ -79,6 +86,8 @@ switch (OperatingSystem.current()) {
     case OperatingSystem.WINDOWS:
         project.ext.lwjglNatives = "natives-windows"
         break
+    case OperatingSystem.MAC_OS:
+        project.ext.lwjglNatives = "natives-macos"
 }
 
 dependencies {
@@ -86,12 +95,7 @@ dependencies {
     mappings loom.layered() {}
 
     modRuntimeOnly "objects:client:43db9b498cb67058d2e12d394e6507722e71bb45" // https://piston-data.mojang.com/v1/objects/43db9b498cb67058d2e12d394e6507722e71bb45/client.jar
-    modImplementation "babric:fabric-loader:${project.loader_version}"
-
-    implementation("org.jetbrains.kotlin:kotlin-stdlib")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-common")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8") // dekotlinify soon :sob:
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
     implementation("org.javassist:javassist:3.29.2-GA")
     implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
@@ -133,11 +137,6 @@ tasks.withType(JavaCompile).configureEach {
     it.options.encoding = "UTF-8"
     if (JavaVersion.current().isJava9Compatible()) it.options.release = 8
 }
-compileKotlin {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-}
 
 java {
     // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
@@ -160,10 +159,6 @@ shadowJar {
         exclude(dependency("org.lwjgl:lwjgl-opengl:$lwjglVersion"))
     }
     dependencies {
-        include(dependency("org.jetbrains.kotlin:kotlin-stdlib"))
-        include(dependency("org.jetbrains.kotlin:kotlin-stdlib-common"))
-        include(dependency("org.jetbrains.kotlin:kotlin-stdlib-jdk7"))
-        include(dependency("org.jetbrains.kotlin:kotlin-stdlib-jdk8"))
         include(dependency("org.javassist:javassist:3.29.2-GA"))
 
         include(dependency("org.lwjgl:lwjgl:$lwjglVersion"))
