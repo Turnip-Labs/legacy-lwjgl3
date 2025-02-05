@@ -127,11 +127,11 @@ public class Keyboard {
      * @throws LWJGLException if the keyboard could not be created for any reason
      */
     public static void create() throws LWJGLException {
-//        synchronized (OpenGLPackageAccess.global_lock) {
+        synchronized (OpenGLPackageAccess.global_lock) {
             //TODO: fix: if (!Display.isCreated()) throw new IllegalStateException("Display must be created.");
 
             create(LWJGLImplementationUtils.getOrCreateInputImplementation());
-//        }
+        }
     }
 
     private static void reset() {
@@ -145,22 +145,22 @@ public class Keyboard {
      * @return true if the keyboard has been created
      */
     public static boolean isCreated() {
-//        synchronized (OpenGLPackageAccess.global_lock) {
+        synchronized (OpenGLPackageAccess.global_lock) {
             return created;
-//        }
+        }
     }
 
     /**
      * "Destroy" the keyboard
      */
     public static void destroy() {
-//        synchronized (OpenGLPackageAccess.global_lock) {
+        synchronized (OpenGLPackageAccess.global_lock) {
             if (!created)
                 return;
             created = false;
             implementation.destroyKeyboard();
             reset();
-//        }
+        }
     }
 
     /**
@@ -185,12 +185,12 @@ public class Keyboard {
      * @see org.lwjgl.input.Keyboard#getEventCharacter()
      */
     public static void poll() {
-//        synchronized (OpenGLPackageAccess.global_lock) {
+        synchronized (OpenGLPackageAccess.global_lock) {
             if (!created)
                 throw new IllegalStateException("Keyboard must be created before you can poll the device");
             implementation.pollKeyboard(keyDownBuffer);
             read();
-//        }
+        }
     }
 
     private static void read() {
@@ -205,11 +205,11 @@ public class Keyboard {
      * @return true if the key is down according to the last poll()
      */
     public static boolean isKeyDown(int key) {
-//        synchronized (OpenGLPackageAccess.global_lock) {
+        synchronized (OpenGLPackageAccess.global_lock) {
             if (!created)
                 throw new IllegalStateException("Keyboard must be created before you can query key state");
             return keyDownBuffer.get(key) != 0;
-//        }
+        }
     }
 
     /**
@@ -246,7 +246,7 @@ public class Keyboard {
      * @return the number of keyboard events
      */
     public static int getNumKeyboardEvents() {
-//        synchronized (OpenGLPackageAccess.global_lock) {
+        synchronized (OpenGLPackageAccess.global_lock) {
             if (!created)
                 throw new IllegalStateException("Keyboard must be created before you can read events");
             int old_position = readBuffer.position();
@@ -255,7 +255,7 @@ public class Keyboard {
                 num_events++;
             readBuffer.position(old_position);
             return num_events;
-//        }
+        }
     }
 
     /**
@@ -270,7 +270,7 @@ public class Keyboard {
      * @return true if a keyboard event was read, false otherwise
      */
     public static boolean next() {
-//        synchronized (OpenGLPackageAccess.global_lock) {
+        synchronized (OpenGLPackageAccess.global_lock) {
             if (!created)
                 throw new IllegalStateException("Keyboard must be created before you can read events");
 
@@ -278,7 +278,7 @@ public class Keyboard {
             while ((result = readNext(current_event)) && current_event.repeat && !repeat_enabled)
                 ;
             return result;
-//        }
+        }
     }
 
     /**
@@ -290,9 +290,9 @@ public class Keyboard {
      * @see org.lwjgl.input.Keyboard#getEventKey()
      */
     public static void enableRepeatEvents(boolean enable) {
-//        synchronized (OpenGLPackageAccess.global_lock) {
+        synchronized (OpenGLPackageAccess.global_lock) {
             repeat_enabled = enable;
-//        }
+        }
     }
 
     /**
@@ -302,9 +302,9 @@ public class Keyboard {
      * @see org.lwjgl.input.Keyboard#getEventKey()
      */
     public static boolean areRepeatEventsEnabled() {
-//        synchronized (OpenGLPackageAccess.global_lock) {
+        synchronized (OpenGLPackageAccess.global_lock) {
             return repeat_enabled;
-//        }
+        }
     }
 
     private static boolean readNext(KeyEvent event) {
@@ -330,9 +330,9 @@ public class Keyboard {
      * @return The character from the current event
      */
     public static char getEventCharacter() {
-//        synchronized (OpenGLPackageAccess.global_lock) {
+        synchronized (OpenGLPackageAccess.global_lock) {
             return (char)current_event.character;
-//        }
+        }
     }
 
     /**
@@ -343,9 +343,9 @@ public class Keyboard {
      * @return The key from the current event
      */
     public static int getEventKey() {
-//        synchronized (OpenGLPackageAccess.global_lock) {
+        synchronized (OpenGLPackageAccess.global_lock) {
             return current_event.key;
-//        }
+        }
     }
 
     /**
@@ -355,9 +355,9 @@ public class Keyboard {
      * @return True if key was down, or false if released
      */
     public static boolean getEventKeyState() {
-//        synchronized (OpenGLPackageAccess.global_lock) {
+        synchronized (OpenGLPackageAccess.global_lock) {
             return current_event.state;
-//        }
+        }
     }
 
     /**
@@ -368,9 +368,9 @@ public class Keyboard {
      * @return The time in nanoseconds of the current event
      */
     public static long getEventNanoseconds() {
-//        synchronized (OpenGLPackageAccess.global_lock) {
+        synchronized (OpenGLPackageAccess.global_lock) {
             return current_event.nanos;
-//        }
+        }
     }
 
     /**
@@ -379,9 +379,9 @@ public class Keyboard {
      * the current event is not a repeat even or if repeat events are disabled.
      */
     public static boolean isRepeatEvent() {
-//        synchronized (OpenGLPackageAccess.global_lock) {
+        synchronized (OpenGLPackageAccess.global_lock) {
             return current_event.repeat;
-//        }
+        }
     }
 
     private static final class KeyEvent {
