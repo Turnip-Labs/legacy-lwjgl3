@@ -1,6 +1,5 @@
 plugins {
     id 'fabric-loom' version "1.7.bta" // To use chocoloom, change the version to a commit hash
-    id 'com.github.johnrengelman.shadow' version '8.1.0'
     id 'maven-publish'
 }
 
@@ -13,91 +12,24 @@ group = project.maven_group
 
 repositories {
     maven {
-        name = "legacy-fabric"
-        url = "https://maven.legacyfabric.net"
-    }
-    ivy {
-        url = "https://piston-data.mojang.com"
-        patternLayout {
-            artifact "v1/[organisation]/[revision]/[module].jar"
-            m2compatible = true
-        }
-        metadataSources { artifact() }
-    }
-    maven {
         name = 'signalumMaven'
         url = 'https://maven.thesignalumproject.net/infrastructure'
     }
     maven { url "https://jitpack.io" }
     mavenCentral()
-    ivy {
-        url = "https://github.com/Better-than-Adventure"
-        patternLayout {
-            artifact "[organisation]/releases/download/v[revision]/[module].jar"
-            m2compatible = true
-        }
-        metadataSources { artifact() }
-    }
-    ivy {
-        url = "https://github.com/Better-than-Adventure"
-        patternLayout {
-            artifact "[organisation]/releases/download/v[revision]/[module].jar"
-            m2compatible = true
-        }
-        metadataSources { artifact() }
-    }
-    ivy {
-        url = "https://downloads.betterthanadventure.net/bta-client/prerelease/"
-        patternLayout {
-            artifact "/v[revision]/client.jar"
-            m2compatible = true
-        }
-        metadataSources { artifact() }
-    }
-    ivy {
-        url = "https://downloads.betterthanadventure.net/bta-server/prerelease/"
-        patternLayout {
-            artifact "/v[revision]/server.jar"
-            m2compatible = true
-        }
-        metadataSources { artifact() }
-    }
 }
 
 loom {
     noIntermediateMappings()
-    customMinecraftMetadata.set("https://github.com/Turnip-Labs/bta-manifest-repo/releases/download/v${project.bta_version}/${project.bta_version}.json")
-    runs {
-        client {
-            programArgs "--username Dev"
-        }
-    }
+    customMinecraftMetadata.set("https://github.com/Turnip-Labs/bta-manifest-repo/releases/download/v7.3-pre4/7.3-pre4.json")
 }
 
-
-import net.fabricmc.loom.task.RemapJarTask
-import org.gradle.internal.os.OperatingSystem
-
-project.ext.lwjglVersion = "3.3.1"
-switch (OperatingSystem.current()) {
-    case OperatingSystem.LINUX:
-        project.ext.lwjglNatives = "natives-linux"
-        break
-    case OperatingSystem.WINDOWS:
-        project.ext.lwjglNatives = "natives-windows"
-        break
-    case OperatingSystem.MAC_OS:
-        project.ext.lwjglNatives = "natives-macos"
-}
+project.ext.lwjglVersion = "3.3.4"
 
 dependencies {
-    minecraft ("::${project.bta_version}")
+    minecraft ("::7.3-pre4")
     mappings loom.layered() {}
 
-    modRuntimeOnly "objects:client:43db9b498cb67058d2e12d394e6507722e71bb45" // https://piston-data.mojang.com/v1/objects/43db9b498cb67058d2e12d394e6507722e71bb45/client.jar
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-
-    implementation("org.javassist:javassist:3.29.2-GA")
     implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 
     implementation "org.lwjgl:lwjgl"
@@ -106,28 +38,10 @@ dependencies {
     implementation "org.lwjgl:lwjgl-opengl"
     implementation "org.lwjgl:lwjgl-assimp"
     implementation "org.lwjgl:lwjgl-stb"
-    runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-openal::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-assimp::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
-
-    var log4jVersion = "2.20.0"
-    implementation("org.apache.logging.log4j:log4j-core:${log4jVersion}")
-    implementation("org.apache.logging.log4j:log4j-api:${log4jVersion}")
 }
 
 configurations.configureEach {
     exclude group: "org.lwjgl.lwjgl"
-}
-
-processResources {
-    inputs.property "version", project.version
-
-    filesMatching("fabric.mod.json") {
-        expand "version": project.version
-    }
 }
 
 // ensure that the encoding is set to UTF-8, no matter what the system default is
@@ -148,49 +62,5 @@ java {
 jar {
     from("LICENSE") {
         rename { "${it}_${project.archivesBaseName}" }
-    }
-}
-
-shadowJar {
-    minimize {
-        exclude(dependency("org.lwjgl:lwjgl:$lwjglVersion"))
-        exclude(dependency("org.lwjgl:lwjgl-glfw:$lwjglVersion"))
-        exclude(dependency("org.lwjgl:lwjgl-openal:$lwjglVersion"))
-        exclude(dependency("org.lwjgl:lwjgl-opengl:$lwjglVersion"))
-    }
-    dependencies {
-        include(dependency("org.javassist:javassist:3.29.2-GA"))
-
-        include(dependency("org.lwjgl:lwjgl:$lwjglVersion"))
-        include(dependency("org.lwjgl:lwjgl-glfw:$lwjglVersion"))
-        include(dependency("org.lwjgl:lwjgl-openal:$lwjglVersion"))
-        include(dependency("org.lwjgl:lwjgl-opengl:$lwjglVersion"))
-    }
-}
-
-tasks.register('remapShadowJar', RemapJarTask) {
-    dependsOn shadowJar
-    input = shadowJar.archiveFile
-    archiveFileName = "${archivesBaseName}-${project.version}-all-remapped.jar"
-    addNestedDependencies = false
-}
-
-// configure the maven publication
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-        }
-    }
-
-    repositories {
-        maven {
-            name = "signalumMaven"
-            url = "https://maven.thesignalumproject.net/infrastructure"
-            credentials(PasswordCredentials)
-            authentication {
-                basic(BasicAuthentication)
-            }
-        }
     }
 }
